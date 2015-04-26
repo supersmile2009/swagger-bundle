@@ -1,0 +1,18 @@
+parameters:
+    draw.swagger.class: Draw\Swagger\Swagger
+    draw.swagger.extrator.php_doc_operation_exractor.class: Draw\Swagger\Extraction\Extractor\PhpDocOperationExtractor
+    draw.swagger.extrator.jms_extractor.class: Draw\Swagger\Extraction\Extractor\JmsExtractor
+
+services:
+    draw.swagger:
+        class: %draw.swagger.class%
+        calls:
+          - [registerExtractor, [@draw.swagger.extrator.php_doc_operation_exractor]]
+          - [registerExtractor, [@draw.swagger.extrator.jms_extractor]]
+
+    draw.swagger.extrator.php_doc_operation_exractor:
+        class: %draw.swagger.extrator.php_doc_operation_exractor.class%
+
+    draw.swagger.extrator.jms_extractor:
+        class: %draw.swagger.extrator.jms_extractor.class%
+        arguments: [@jms_serializer.metadata_factory, @jms_serializer.naming_strategy]

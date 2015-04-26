@@ -35,3 +35,16 @@
 
 # Composer PHAR
 /composer.phar
+
+# IDE
+/.idea
+
+# Test
+/Tests/fixtures/app/cache/*
+/Tests/fixtures/app/logs/*
+/Tests/fixtures/app/cache/.gitkeep
+/Tests/fixtures/app/logs/.gitkeep
+/Tests/report
+
+# Composer
+/composer.lock

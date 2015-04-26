@@ -1,0 +1,9 @@
+imports:
+  - { resource: parameters.yml }
+
+framework:
+  secret: fos
+  router:
+    resource: "%kernel.root_dir%/config/routing.yml"
+  test: ~
+  session: ~

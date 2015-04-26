@@ -1,0 +1,24 @@
+{
+    "name": "draw/swagger-bundle",
+    "type": "project",
+    "description": "draw/swagger library integration into Symfony2.",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Draw\\SwaggerBundle\\": ""
+        }
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "draw/swagger": "dev-master",
+        "symfony/framework-bundle": "~2.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*",
+        "symfony/symfony": "~2.3",
+        "polishsymfonycommunity/symfony-mocker-container": "~1.0",
+        "jms/serializer-bundle": "@stable",
+        "friendsofsymfony/rest-bundle": "1.4.*"
+    }
+}
