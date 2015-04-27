@@ -11,5 +11,14 @@ class DrawSwaggerBundleTest extends WebTestCase
         $swagger = static::createClient()->getContainer()->get("draw.swagger");
 
         $this->assertInstanceOf('Draw\Swagger\Swagger', $swagger);
+
+        return $swagger;
+    }
+
+    public function testSwaggerControllerApiDoc()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api-doc');
+        $client->getResponse()->getContent();
     }
 }

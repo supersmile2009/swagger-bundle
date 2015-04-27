@@ -7,3 +7,6 @@ framework:
     resource: "%kernel.root_dir%/config/routing.yml"
   test: ~
   session: ~
+  validation: { enable_annotations: true }
+  templating:
+    engines: ['twig']

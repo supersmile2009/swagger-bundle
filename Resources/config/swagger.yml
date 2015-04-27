@@ -2,17 +2,39 @@ parameters:
     draw.swagger.class: Draw\Swagger\Swagger
     draw.swagger.extrator.php_doc_operation_exractor.class: Draw\Swagger\Extraction\Extractor\PhpDocOperationExtractor
     draw.swagger.extrator.jms_extractor.class: Draw\Swagger\Extraction\Extractor\JmsExtractor
+    draw.swagger.extrator.symfony_container_swagger_extractor.class: Draw\SwaggerBundle\Extractor\SymfonyContainerSwaggerExtractor
+    draw.swagger.extrator.fos_rest_route_operation_extractor.class: Draw\SwaggerBundle\Extractor\FOSRestRouteOperationExtractor
+    draw.swagger.extrator.route_operation_extractor.class: Draw\SwaggerBundle\Extractor\RouteOperationExtractor
 
 services:
     draw.swagger:
         class: %draw.swagger.class%
+        arguments: [@jms_serializer.serializer]
         calls:
-          - [registerExtractor, [@draw.swagger.extrator.php_doc_operation_exractor]]
+          - [registerExtractor, [@draw.swagger.extrator.symfony_container_swagger_extractor]]
+          - [registerExtractor, [@draw.swagger.extrator.route_operation_extractor]]
           - [registerExtractor, [@draw.swagger.extrator.jms_extractor]]
+          - [registerExtractor, [@draw.swagger.extrator.fos_rest_route_operation_extractor]]
+          - [registerExtractor, [@draw.swagger.extrator.php_doc_operation_exractor]]
+
+    draw.swagger.extrator.symfony_container_swagger_extractor:
+        class: %draw.swagger.extrator.symfony_container_swagger_extractor.class%
 
     draw.swagger.extrator.php_doc_operation_exractor:
         class: %draw.swagger.extrator.php_doc_operation_exractor.class%
 
+    draw.swagger.extrator.route_operation_extractor:
+        class: %draw.swagger.extrator.route_operation_extractor.class%
+
+    draw.swagger.extrator.fos_rest_route_operation_extractor:
+        class: %draw.swagger.extrator.fos_rest_route_operation_extractor.class%
+        arguments: [@fos_rest.request.param_fetcher.reader]
+
     draw.swagger.extrator.jms_extractor:
         class: %draw.swagger.extrator.jms_extractor.class%
         arguments: [@jms_serializer.metadata_factory, @jms_serializer.naming_strategy]
+
+    draw.swagger.jms_serializer_listener:
+        class: Draw\Swagger\JMSSerializerListener
+        tags:
+            - { name: jms_serializer.event_subscriber }

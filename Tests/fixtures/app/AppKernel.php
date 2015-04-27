@@ -9,7 +9,9 @@ class AppKernel extends \Symfony\Component\HttpKernel\Kernel
     {
         return array(
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Draw\SwaggerBundle\DrawSwaggerBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
         );
     }
