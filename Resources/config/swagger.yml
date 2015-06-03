@@ -7,6 +7,7 @@ parameters:
     draw.swagger.extrator.route_operation_extractor.class: Draw\SwaggerBundle\Extractor\RouteOperationExtractor
     draw.swagger.extrator.swagger_schema_extractor.class: Draw\Swagger\Extraction\Extractor\SwaggerSchemaExtractor
     draw.swagger.extractor.param_converter_extractor.class: Draw\SwaggerBundle\Extractor\ParamConverterExtractor
+    draw.swagger.extrator.type_schema_extractor.class: Draw\Swagger\Extraction\Extractor\TypeSchemaExtractor
 
 services:
     draw.swagger:
@@ -21,6 +22,11 @@ services:
     draw.swagger.extrator.swagger_schema_extractor:
         class: %draw.swagger.extrator.swagger_schema_extractor.class%
         arguments: [@jms_serializer.serializer]
+        tags:
+            - { name: swagger.extractor }
+
+    draw.swagger.extrator.type_schema_extractor:
+        class: %draw.swagger.extrator.type_schema_extractor.class%
         tags:
             - { name: swagger.extractor }
 
