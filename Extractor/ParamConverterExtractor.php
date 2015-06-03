@@ -77,13 +77,45 @@ class ParamConverterExtractor implements ExtractorInterface
 
         $operation->parameters[] = $parameter = new BodyParameter();
 
-        $extractionContext->getSwagger()->extract(
+        $subContext = $extractionContext->createSubContext();
+
+        $subContext->setParameter(
+            'serializer-groups',
+            $this->getDeserializationGroups($paramConverter)
+        );
+
+        $subContext->setParameter(
+            'validation-groups',
+            $this->getValidationGroups($paramConverter)
+        );
+
+        $subContext->getSwagger()->extract(
             new \ReflectionClass($type),
             $parameter->schema = new Schema(),
-            $extractionContext
+            $subContext
         );
 
         $parameter->schema->type = "object";
+    }
+
+    private function getDeserializationGroups(ParamConverter $paramConverter)
+    {
+        $options = $paramConverter->getOptions();
+        if(isset($options['deserializationContext']['groups'])) {
+            return $options['deserializationContext']['groups'];
+        }
+
+        return null;
+    }
+
+    private function getValidationGroups(ParamConverter $paramConverter)
+    {
+        $options = $paramConverter->getOptions();
+        if(isset($options['validator']['groups'])) {
+            return $options['validator']['groups'];
+        }
+
+        return null;
     }
 
     /**
