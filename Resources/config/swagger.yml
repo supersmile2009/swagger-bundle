@@ -42,3 +42,24 @@ services:
         class: Draw\Swagger\JMSSerializerListener
         tags:
             - { name: jms_serializer.event_subscriber }
+
+    draw.swagger.extractor.constraint_extractor:
+        abstract:  true
+        calls:
+            - [setMetadataFactory, [@validator.mapping.class_metadata_factory]]
+
+    draw.swagger.extractor.constraint_extractor.not_null:
+        parent: draw.swagger.extractor.constraint_extractor
+        class: Draw\Swagger\Extraction\Extractor\Constraint\NotNullConstraintExtractor
+
+    draw.swagger.extractor.constraint_extractor.choice:
+        parent: draw.swagger.extractor.constraint_extractor
+        class: Draw\Swagger\Extraction\Extractor\Constraint\ChoiceConstraintExtractor
+
+    draw.swagger.extractor.constraint_extractor.not_blank:
+        parent: draw.swagger.extractor.constraint_extractor
+        class: Draw\Swagger\Extraction\Extractor\Constraint\NotBlankConstraintExtractor
+
+    draw.swagger.extractor.constraint_extractor.length:
+        parent: draw.swagger.extractor.constraint_extractor
+        class: Draw\Swagger\Extraction\Extractor\Constraint\LengthConstraintExtractor
