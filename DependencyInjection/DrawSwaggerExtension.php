@@ -19,8 +19,13 @@ class DrawSwaggerExtension extends Extension
      *
      * @api
      */
-    public function load(array $config, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter("draw_swagger.schema",$config['schema']);
+
         $fileLocator = new FileLocator(__DIR__.'/../Resources/config');
         $loader = new YamlFileLoader($container, $fileLocator);
         $loader->load('swagger.yml');

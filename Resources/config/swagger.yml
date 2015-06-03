@@ -5,6 +5,8 @@ parameters:
     draw.swagger.extrator.symfony_container_swagger_extractor.class: Draw\SwaggerBundle\Extractor\SymfonyContainerSwaggerExtractor
     draw.swagger.extrator.fos_rest_route_operation_extractor.class: Draw\SwaggerBundle\Extractor\FOSRestRouteOperationExtractor
     draw.swagger.extrator.route_operation_extractor.class: Draw\SwaggerBundle\Extractor\RouteOperationExtractor
+    draw.swagger.extrator.swagger_schema_extractor.class: Draw\Swagger\Extraction\Extractor\SwaggerSchemaExtractor
+    draw.swagger.extractor.param_converter_extractor.class: Draw\SwaggerBundle\Extractor\ParamConverterExtractor
 
 services:
     draw.swagger:
@@ -16,8 +18,9 @@ services:
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.php_doc_operation_exractor:
-        class: %draw.swagger.extrator.php_doc_operation_exractor.class%
+    draw.swagger.extrator.swagger_schema_extractor:
+        class: %draw.swagger.extrator.swagger_schema_extractor.class%
+        arguments: [@jms_serializer.serializer]
         tags:
             - { name: swagger.extractor }
 
@@ -63,3 +66,14 @@ services:
     draw.swagger.extractor.constraint_extractor.length:
         parent: draw.swagger.extractor.constraint_extractor
         class: Draw\Swagger\Extraction\Extractor\Constraint\LengthConstraintExtractor
+
+    draw.swagger.extrator.php_doc_operation_exractor:
+        class: %draw.swagger.extrator.php_doc_operation_exractor.class%
+        tags:
+            - { name: swagger.extractor }
+
+    draw.swagger.extractor.param_converter_extractor:
+        class: %draw.swagger.extractor.param_converter_extractor.class%
+        arguments: [@annotations.reader]
+        tags:
+            - { name: swagger.extractor }
