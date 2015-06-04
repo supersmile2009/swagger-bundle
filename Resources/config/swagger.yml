@@ -19,6 +19,12 @@ services:
         tags:
             - { name: swagger.extractor }
 
+    draw.swagger.extrator.swagger_tag_extractor:
+        class: Draw\Swagger\Extraction\Extractor\SwaggerTagExtractor
+        arguments: [@annotation_reader]
+        tags:
+            - { name: swagger.extractor }
+
     draw.swagger.extrator.swagger_schema_extractor:
         class: %draw.swagger.extrator.swagger_schema_extractor.class%
         arguments: [@jms_serializer.serializer]
