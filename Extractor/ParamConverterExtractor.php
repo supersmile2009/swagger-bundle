@@ -79,18 +79,32 @@ class ParamConverterExtractor implements ExtractorInterface
 
         $subContext = $extractionContext->createSubContext();
 
+        $subContext->setParameter('direction','in');
+
         $subContext->setParameter(
-            'serializer-groups',
-            $this->getDeserializationGroups($paramConverter)
+            'deserializer-groups',
+            $serializationGroups = $this->getDeserializationGroups($paramConverter)
         );
 
         $subContext->setParameter(
             'validation-groups',
-            $this->getValidationGroups($paramConverter)
+            $validationGroups = $this->getValidationGroups($paramConverter)
         );
 
+        $modelContext = $subContext->getParameter('in-model-context', array());
+
+        if($serializationGroups) {
+            $modelContext['deserializer-groups'] = $serializationGroups;
+        }
+
+        if($validationGroups) {
+            $modelContext['validation-groups'] = $validationGroups;
+        }
+
+        $subContext->setParameter('in-model-context', $modelContext);
+
         $subContext->getSwagger()->extract(
-            new \ReflectionClass($type),
+            $type,
             $parameter->schema = new Schema(),
             $subContext
         );
