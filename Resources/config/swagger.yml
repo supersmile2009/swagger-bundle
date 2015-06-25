@@ -22,7 +22,7 @@ services:
 
     draw.swagger.extrator.fos_rest_view_operation_extractor:
         class: %draw.swagger.extrator.fos_rest_view_operation_extractor.class%
-        arguments: [@annotation_reader]
+        arguments: [@annotation_reader, @draw.serializer.group_hierarchy]
         tags:
             - { name: swagger.extractor }
 
@@ -86,6 +86,10 @@ services:
         parent: draw.swagger.extractor.constraint_extractor
         class: Draw\Swagger\Extraction\Extractor\Constraint\LengthConstraintExtractor
 
+    draw.swagger.extractor.constraint_extractor.count:
+        parent: draw.swagger.extractor.constraint_extractor
+        class: Draw\Swagger\Extraction\Extractor\Constraint\CountConstraintExtractor
+
     draw.swagger.extrator.php_doc_operation_exractor:
         class: %draw.swagger.extrator.php_doc_operation_exractor.class%
         tags:
@@ -93,6 +97,6 @@ services:
 
     draw.swagger.extractor.param_converter_extractor:
         class: %draw.swagger.extractor.param_converter_extractor.class%
-        arguments: [@annotations.reader]
+        arguments: [@annotations.reader, @draw.serializer.group_hierarchy]
         tags:
             - { name: swagger.extractor }

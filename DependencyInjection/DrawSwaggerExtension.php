@@ -24,10 +24,19 @@ class DrawSwaggerExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter("draw_swagger.schema",$config['schema']);
+        $container->setParameter("draw_swagger.schema", $config['schema']);
 
-        $fileLocator = new FileLocator(__DIR__.'/../Resources/config');
+        $fileLocator = new FileLocator(__DIR__ . '/../Resources/config');
         $loader = new YamlFileLoader($container, $fileLocator);
         $loader->load('swagger.yml');
+
+        $definition = $container->getDefinition("draw.swagger.extrator.type_schema_extractor");
+
+        foreach ($config['definitionAliases'] as $alias) {
+            $definition->addMethodCall(
+                'registerDefinitionAlias',
+                [$alias['class'], $alias['alias']]
+            );
+        }
     }
 }

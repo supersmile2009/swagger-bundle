@@ -23,6 +23,15 @@ class Configuration implements ConfigurationInterface
         $rootNode->setBuilder(new AllowExtraPropertiesNodeBuilder());
 
         $rootNode->children()
+            ->arrayNode('definitionAliases')
+                ->defaultValue(array())
+                ->prototype("array")
+                    ->children()
+                        ->scalarNode("class")->isRequired()->end()
+                        ->scalarNode("alias")->isRequired()->end()
+                    ->end()
+                ->end()
+            ->end()
             ->arrayNode('schema')
             ->normalizeKeys(false)
             ->acceptExtraKeys(true)

@@ -3,6 +3,7 @@
 namespace Draw\SwaggerBundle\Extractor;
 
 use Doctrine\Common\Annotations\Reader;
+use Draw\DrawBundle\Serializer\GroupHierarchy;
 use Draw\Swagger\Schema\Schema;
 use Draw\Swagger\Extraction\ExtractionContextInterface;
 use Draw\Swagger\Extraction\ExtractionImpossibleException;
@@ -19,9 +20,15 @@ class ParamConverterExtractor implements ExtractorInterface
      */
     private $reader;
 
-    public function __construct(Reader $reader)
+    /**
+     * @var GroupHierarchy
+     */
+    private $groupHierarchy;
+
+    public function __construct(Reader $reader, GroupHierarchy $groupHierarchy)
     {
         $this->reader = $reader;
+        $this->groupHierarchy = $groupHierarchy;
     }
 
     /**
@@ -66,9 +73,9 @@ class ParamConverterExtractor implements ExtractorInterface
         }
 
         $paramConverter = $this->getParamConverter($method);
-        if(is_null($type = $paramConverter->getClass())) {
-            foreach($method->getParameters() as $parameter) {
-                if($parameter->getName() != $paramConverter->getName()) {
+        if (is_null($type = $paramConverter->getClass())) {
+            foreach ($method->getParameters() as $parameter) {
+                if ($parameter->getName() != $paramConverter->getName()) {
                     continue;
                 }
                 $type = $parameter->getClass()->getName();
@@ -79,12 +86,13 @@ class ParamConverterExtractor implements ExtractorInterface
 
         $subContext = $extractionContext->createSubContext();
 
-        $subContext->setParameter('direction','in');
+        $subContext->setParameter('direction', 'in');
 
-        $subContext->setParameter(
-            'deserializer-groups',
-            $serializationGroups = $this->getDeserializationGroups($paramConverter)
-        );
+        if ($serializationGroups = $this->getDeserializationGroups($paramConverter)) {
+            $serializationGroups = $this->groupHierarchy->getReachableGroups($serializationGroups);
+        }
+
+        $subContext->setParameter('deserializer-groups', $serializationGroups);
 
         $subContext->setParameter(
             'validation-groups',
@@ -93,11 +101,11 @@ class ParamConverterExtractor implements ExtractorInterface
 
         $modelContext = $subContext->getParameter('in-model-context', array());
 
-        if($serializationGroups) {
+        if ($serializationGroups) {
             $modelContext['deserializer-groups'] = $serializationGroups;
         }
 
-        if($validationGroups) {
+        if ($validationGroups) {
             $modelContext['validation-groups'] = $validationGroups;
         }
 
@@ -115,7 +123,7 @@ class ParamConverterExtractor implements ExtractorInterface
     private function getDeserializationGroups(ParamConverter $paramConverter)
     {
         $options = $paramConverter->getOptions();
-        if(isset($options['deserializationContext']['groups'])) {
+        if (isset($options['deserializationContext']['groups'])) {
             return $options['deserializationContext']['groups'];
         }
 
@@ -125,7 +133,7 @@ class ParamConverterExtractor implements ExtractorInterface
     private function getValidationGroups(ParamConverter $paramConverter)
     {
         $options = $paramConverter->getOptions();
-        if(isset($options['validator']['groups'])) {
+        if (isset($options['validator']['groups'])) {
             return $options['validator']['groups'];
         }
 
