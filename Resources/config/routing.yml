@@ -1,3 +1,3 @@
 draw.swagger_api_doc:
-    path: /api-doc
-    defaults: { _controller: DrawSwaggerBundle:Swagger:apiDoc }
+    path: /api-doc.{_format}
+    defaults: { _controller: DrawSwaggerBundle:Swagger:apiDoc, _format: html }
