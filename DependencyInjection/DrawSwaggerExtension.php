@@ -30,6 +30,8 @@ class DrawSwaggerExtension extends Extension
         $loader = new YamlFileLoader($container, $fileLocator);
         $loader->load('swagger.yml');
 
+        $loader->load('ui-api-authorization-bearer-converter.yml');
+
         $definition = $container->getDefinition("draw.swagger.extrator.type_schema_extractor");
 
         foreach ($config['definitionAliases'] as $alias) {
