@@ -1,5 +1,0 @@
-services:
-    draw_sager.api_key_to_authorization_bearer_event_listener:
-        class: Draw\SwaggerBundle\EventListener\ApiKeyToAuthorizationBearerEventListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: listenRequest, priority: 999 }
