@@ -10,3 +10,7 @@ framework:
   validation: { enable_annotations: true }
   templating:
     engines: ['twig']
+
+fos_rest:
+    body_converter:
+        enabled: true

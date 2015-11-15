@@ -10,8 +10,9 @@
         }
     },
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4",
         "draw/swagger": "dev-master",
+        "draw/draw-bundle": "dev-master",
         "symfony/framework-bundle": "~2.3"
     },
     "require-dev": {
@@ -19,6 +20,7 @@
         "symfony/symfony": "~2.3",
         "polishsymfonycommunity/symfony-mocker-container": "~1.0",
         "jms/serializer-bundle": "@stable",
-        "friendsofsymfony/rest-bundle": "1.4.*"
+        "friendsofsymfony/rest-bundle": "1.4.*",
+        "sensio/framework-extra-bundle": "~3.0"
     }
 }

@@ -4,10 +4,11 @@ namespace Draw\SwaggerBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class DrawSwaggerExtension extends Extension
+class DrawSwaggerExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * Loads a specific configuration.
@@ -38,5 +39,18 @@ class DrawSwaggerExtension extends Extension
                 [$alias['class'], $alias['alias']]
             );
         }
+    }
+
+    /**
+     * Allow an extension to prepend the extension configurations.
+     *
+     * @param ContainerBuilder $container
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig(
+            'draw_swagger',
+            ['schema' => ['info' => []]]
+        );
     }
 }

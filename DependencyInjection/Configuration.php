@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
                 ->children()
                     ->arrayNode("info")
                         ->children()
-                            ->scalarNode("version")->isRequired()->defaultValue("1.0")->end()
+                            ->scalarNode("version")->defaultValue("1.0")->end()
                             ->scalarNode("contact")->end()
                             ->scalarNode("termsOfService")->end()
                             ->scalarNode("description")->end()

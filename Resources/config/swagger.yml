@@ -17,6 +17,7 @@ services:
 
     draw.swagger.extrator.symfony_container_swagger_extractor:
         class: %draw.swagger.extrator.symfony_container_swagger_extractor.class%
+        arguments: [@annotation_reader]
         tags:
             - { name: swagger.extractor }
 
