@@ -83,6 +83,10 @@ services:
         parent: draw.swagger.extractor.constraint_extractor
         class: Draw\Swagger\Extraction\Extractor\Constraint\NotBlankConstraintExtractor
 
+    draw.swagger.extractor.constraint_extractor.range:
+        parent: draw.swagger.extractor.constraint_extractor
+        class: Draw\Swagger\Extraction\Extractor\Constraint\RangeConstraintExtractor
+
     draw.swagger.extractor.constraint_extractor.length:
         parent: draw.swagger.extractor.constraint_extractor
         class: Draw\Swagger\Extraction\Extractor\Constraint\LengthConstraintExtractor
