@@ -63,7 +63,7 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
 
     private function triggerRouteExtraction(RouterInterface $router, SwaggerSchema $schema, ExtractionContextInterface $extractionContext)
     {
-        foreach ($router->getRouteCollection() as $route) {
+        foreach ($router->getRouteCollection() as $operationId => $route) {
             /* @var \Symfony\Component\Routing\Route $route */
             if(!($path = $route->getPath())) {
                 continue;
@@ -84,6 +84,8 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
             }
 
             $operation = new Operation();
+
+            $operation->operationId = $operationId;
 
             $extractionContext->getSwagger()->extract($route, $operation, $extractionContext);
             $extractionContext->getSwagger()->extract($reflectionMethod, $operation, $extractionContext);

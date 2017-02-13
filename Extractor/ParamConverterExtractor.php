@@ -10,6 +10,7 @@ use Draw\Swagger\Extraction\ExtractionImpossibleException;
 use Draw\Swagger\Extraction\ExtractorInterface;
 use Draw\Swagger\Schema\BodyParameter;
 use Draw\Swagger\Schema\Operation;
+use JMS\Serializer\Exclusion\GroupsExclusionStrategy;
 use ReflectionMethod;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -92,8 +93,6 @@ class ParamConverterExtractor implements ExtractorInterface
             $serializationGroups = $this->groupHierarchy->getReachableGroups($serializationGroups);
         }
 
-        $subContext->setParameter('deserializer-groups', $serializationGroups);
-
         $subContext->setParameter(
             'validation-groups',
             $validationGroups = $this->getValidationGroups($paramConverter)
@@ -102,7 +101,7 @@ class ParamConverterExtractor implements ExtractorInterface
         $modelContext = $subContext->getParameter('in-model-context', array());
 
         if ($serializationGroups) {
-            $modelContext['deserializer-groups'] = $serializationGroups;
+            $modelContext['serializer-groups'] = $serializationGroups;
         }
 
         if ($validationGroups) {
@@ -127,7 +126,7 @@ class ParamConverterExtractor implements ExtractorInterface
             return $options['deserializationContext']['groups'];
         }
 
-        return null;
+        return  array(GroupsExclusionStrategy::DEFAULT_GROUP);
     }
 
     private function getValidationGroups(ParamConverter $paramConverter)
