@@ -12,52 +12,52 @@ parameters:
 
 services:
     draw.swagger:
-        class: %draw.swagger.class%
-        arguments: [@jms_serializer.serializer]
+        class: '%draw.swagger.class%'
+        arguments: ['@jms_serializer.serializer']
 
     draw.swagger.extrator.symfony_container_swagger_extractor:
-        class: %draw.swagger.extrator.symfony_container_swagger_extractor.class%
-        arguments: [@annotation_reader]
+        class: '%draw.swagger.extrator.symfony_container_swagger_extractor.class%'
+        arguments: ['@annotation_reader']
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.fos_rest_view_operation_extractor:
-        class: %draw.swagger.extrator.fos_rest_view_operation_extractor.class%
-        arguments: [@annotation_reader, @draw.serializer.group_hierarchy]
+        class: '%draw.swagger.extrator.fos_rest_view_operation_extractor.class%'
+        arguments: ['@annotation_reader', '@draw.serializer.group_hierarchy']
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.swagger_tag_extractor:
         class: Draw\Swagger\Extraction\Extractor\SwaggerTagExtractor
-        arguments: [@annotation_reader]
+        arguments: ['@annotation_reader']
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.swagger_schema_extractor:
         class: %draw.swagger.extrator.swagger_schema_extractor.class%
-        arguments: [@jms_serializer.serializer]
+        arguments: ['@jms_serializer.serializer']
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.type_schema_extractor:
-        class: %draw.swagger.extrator.type_schema_extractor.class%
+        class: '%draw.swagger.extrator.type_schema_extractor.class%'
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.route_operation_extractor:
-        class: %draw.swagger.extrator.route_operation_extractor.class%
+        class: '%draw.swagger.extrator.route_operation_extractor.class%'
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.fos_rest_route_operation_extractor:
-        class: %draw.swagger.extrator.fos_rest_route_operation_extractor.class%
-        arguments: [@fos_rest.request.param_fetcher.reader]
+        class: '%draw.swagger.extrator.fos_rest_route_operation_extractor.class%'
+        arguments: ['@fos_rest.request.param_fetcher.reader']
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.jms_extractor:
-        class: %draw.swagger.extrator.jms_extractor.class%
-        arguments: [@jms_serializer.metadata_factory, @jms_serializer.naming_strategy]
+        class: '%draw.swagger.extrator.jms_extractor.class%'
+        arguments: ['@jms_serializer.metadata_factory', '@jms_serializer.naming_strategy']
         tags:
             - { name: swagger.extractor }
 
@@ -69,7 +69,7 @@ services:
     draw.swagger.extractor.constraint_extractor:
         abstract:  true
         calls:
-            - [setMetadataFactory, [@validator.mapping.class_metadata_factory]]
+            - [setMetadataFactory, ['@validator.mapping.class_metadata_factory']]
 
     draw.swagger.extractor.constraint_extractor.not_null:
         parent: draw.swagger.extractor.constraint_extractor
@@ -96,12 +96,12 @@ services:
         class: Draw\Swagger\Extraction\Extractor\Constraint\CountConstraintExtractor
 
     draw.swagger.extrator.php_doc_operation_exractor:
-        class: %draw.swagger.extrator.php_doc_operation_exractor.class%
+        class: '%draw.swagger.extrator.php_doc_operation_exractor.class%'
         tags:
             - { name: swagger.extractor }
 
     draw.swagger.extractor.param_converter_extractor:
-        class: %draw.swagger.extractor.param_converter_extractor.class%
-        arguments: [@annotations.reader, @draw.serializer.group_hierarchy]
+        class: '%draw.swagger.extractor.param_converter_extractor.class%'
+        arguments: ['@annotations.reader', '@draw.serializer.group_hierarchy']
         tags:
             - { name: swagger.extractor }
