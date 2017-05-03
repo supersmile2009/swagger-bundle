@@ -50,7 +50,7 @@ class DrawSwaggerExtension extends Extension implements PrependExtensionInterfac
     {
         $container->prependExtensionConfig(
             'draw_swagger',
-            ['schema' => ['info' => []]]
+            ['schema' => ['info' => [], 'tags' =>[]]]
         );
     }
 }

@@ -21,10 +21,14 @@ class SwaggerController extends Controller
         $swagger = $this->get("draw.swagger");
         $schema = $swagger->extract(json_encode($this->getParameter("draw_swagger.schema")));
 
-        $schema = $swagger->extract($this->container, $schema);
+        //set host dynamically.
+        $schema->host = $request->getHost();
 
+        $schema = $swagger->extract($this->container, $schema);
+        $schema->paths = [];
+        //$schema->definitions =[];
         $jsonSchema = $swagger->dump($schema);
 
-        return new JsonResponse(json_decode($jsonSchema));
+        return new JsonResponse($jsonSchema, 200, [], true);
     }
 }

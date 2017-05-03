@@ -34,7 +34,7 @@ services:
             - { name: swagger.extractor }
 
     draw.swagger.extrator.swagger_schema_extractor:
-        class: %draw.swagger.extrator.swagger_schema_extractor.class%
+        class: "%draw.swagger.extrator.swagger_schema_extractor.class%"
         arguments: ['@jms_serializer.serializer']
         tags:
             - { name: swagger.extractor }
