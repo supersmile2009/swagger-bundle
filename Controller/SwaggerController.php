@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SwaggerController extends Controller
 {
@@ -14,7 +15,7 @@ class SwaggerController extends Controller
         if($request->getRequestFormat() != 'json') {
             $currentRoute = $request->attributes->get('_route');
             $currentUrl = $this->get('router')
-                ->generate($currentRoute, array('_format' => 'json'), true);
+                ->generate($currentRoute, array('_format' => 'json'), UrlGeneratorInterface::NETWORK_PATH);
             return new RedirectResponse('http://petstore.swagger.io/?url=' . $currentUrl);
         }
         
