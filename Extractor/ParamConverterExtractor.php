@@ -66,6 +66,8 @@ class ParamConverterExtractor implements ExtractorInterface
      * @param ReflectionMethod $method
      * @param Operation $operation
      * @param ExtractionContextInterface $extractionContext
+     * @throws ExtractionImpossibleException
+     * @return void
      */
     public function extract($method, $operation, ExtractionContextInterface $extractionContext)
     {

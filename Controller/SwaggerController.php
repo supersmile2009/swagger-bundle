@@ -25,7 +25,7 @@ class SwaggerController extends Controller
         $schema->host = $request->getHost();
 
         $schema = $swagger->extract($this->container, $schema);
-        $schema->paths = [];
+        //$schema->paths = [];
         //$schema->definitions =[];
         $jsonSchema = $swagger->dump($schema);
 

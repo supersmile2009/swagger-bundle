@@ -80,16 +80,18 @@ class FOSRestRouteOperationExtractor implements ExtractorInterface
                 }
 
                 if(is_null($parameter)) {
-                    $type->parameters[] = $parameter = new BodyParameter();
+                    $parameter = new BodyParameter();
                     $parameter->schema = new Schema();
                     $parameter->schema->type = "object";
+                    $type->parameters[] = $parameter;
                 }
 
-                $parameter->schema->properties[$paramName] = $propertySchema = new Schema();
+                $propertySchema = new Schema();
+                $parameter->schema->properties[$paramName] = $propertySchema;
                 if(!$param->nullable) {
                     $parameter->schema->required[] = $paramName;
                 }
-                $parameter = $propertySchema;
+                //$parameter = $propertySchema;
             }
 
             $parameter->default = $param->default;
