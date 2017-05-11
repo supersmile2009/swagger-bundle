@@ -12,7 +12,7 @@ class SwaggerController extends Controller
 {
     public function apiDocAction(Request $request)
     {
-        if($request->getRequestFormat() != 'json') {
+        if( $request->attributes->get('_format') != 'json') {
             $currentRoute = $request->attributes->get('_route');
             $currentUrl = $this->get('router')
                 ->generate($currentRoute, array('_format' => 'json'), UrlGeneratorInterface::NETWORK_PATH);
