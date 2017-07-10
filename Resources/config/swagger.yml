@@ -9,6 +9,7 @@ parameters:
     draw.swagger.extractor.param_converter_extractor.class: Draw\SwaggerBundle\Extractor\ParamConverterExtractor
     draw.swagger.extrator.type_schema_extractor.class: Draw\Swagger\Extraction\Extractor\TypeSchemaExtractor
     draw.swagger.extrator.fos_rest_view_operation_extractor.class: Draw\SwaggerBundle\Extractor\FOSRestViewOperationExtractor
+    draw.swagger.extrator.abstract_class_extractor.class: Draw\SwaggerBundle\Extractor\AbstractClassExtractor
 
 services:
     draw.swagger:
@@ -36,6 +37,12 @@ services:
     draw.swagger.extrator.swagger_schema_extractor:
         class: "%draw.swagger.extrator.swagger_schema_extractor.class%"
         arguments: ['@jms_serializer.serializer']
+        tags:
+            - { name: swagger.extractor }
+
+    draw.swagger.extrator.abstract_class_extractor:
+        class: '%draw.swagger.extrator.abstract_class_extractor.class%'
+        arguments: ['@sonata.admin.entity_manager']
         tags:
             - { name: swagger.extractor }
 
