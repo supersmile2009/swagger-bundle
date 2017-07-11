@@ -64,7 +64,10 @@ services:
 
     draw.swagger.extrator.jms_extractor:
         class: '%draw.swagger.extrator.jms_extractor.class%'
-        arguments: ['@jms_serializer.metadata_factory', '@jms_serializer.naming_strategy']
+        arguments:
+            - '@jms_serializer.metadata_factory'
+            - '@jms_serializer.naming_strategy'
+            - '@draw.swagger.extrator.type_schema_extractor'
         tags:
             - { name: swagger.extractor }
 
