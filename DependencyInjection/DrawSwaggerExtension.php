@@ -39,6 +39,9 @@ class DrawSwaggerExtension extends Extension implements PrependExtensionInterfac
                 [$alias['class'], $alias['alias']]
             );
         }
+
+        $phpDocDefinition = $container->getDefinition('draw.swagger.extrator.php_doc_operation_exractor');
+        $phpDocDefinition->addMethodCall('setExcludedTypes', [$config['excludedReturnTypes']]);
     }
 
     /**

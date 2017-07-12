@@ -66,6 +66,10 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
+            ->arrayNode('excludedReturnTypes')
+                ->defaultValue(array())
+                ->prototype('scalar')->end()
+            ->end()
         ->end();
 
         return $treeBuilder;
