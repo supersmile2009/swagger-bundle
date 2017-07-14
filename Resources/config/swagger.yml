@@ -107,6 +107,7 @@ services:
 
     draw.swagger.extrator.php_doc_operation_exractor:
         class: '%draw.swagger.extrator.php_doc_operation_exractor.class%'
+        arguments: ['@draw.swagger.extrator.fos_rest_view_operation_extractor']
         tags:
             - { name: swagger.extractor }
 

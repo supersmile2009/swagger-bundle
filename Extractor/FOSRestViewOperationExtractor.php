@@ -88,7 +88,7 @@ class FOSRestViewOperationExtractor implements ExtractorInterface
      * @param ReflectionMethod $reflectionMethod
      * @return View|null
      */
-    private function getView(ReflectionMethod $reflectionMethod)
+    public function getView(ReflectionMethod $reflectionMethod)
     {
         $views = array_filter(
             $this->annotationReader->getMethodAnnotations($reflectionMethod),
