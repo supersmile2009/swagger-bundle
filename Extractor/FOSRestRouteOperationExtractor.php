@@ -71,6 +71,10 @@ class FOSRestRouteOperationExtractor implements ExtractorInterface
                 $parameter = new QueryParameter();
                 $type->parameters[] = $parameter;
                 $parameter->name = $paramName;
+                // Param is really required only if it's not nullable and has no default value.
+                if($param->nullable === false && $param->default === null) {
+                    $parameter->required = true;
+                }
             } elseif($param instanceof RequestParam) {
                 foreach($type->parameters as $currentParameter) {
                     if($currentParameter instanceof BodyParameter) {
