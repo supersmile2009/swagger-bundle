@@ -4,6 +4,8 @@ namespace Draw\SwaggerBundle\Extractor;
 
 use Doctrine\Common\Annotations\Reader;
 use Draw\DrawBundle\Serializer\GroupHierarchy;
+use Draw\Swagger\Schema\MediaType;
+use Draw\Swagger\Schema\RequestBody;
 use Draw\Swagger\Schema\Schema;
 use Draw\Swagger\Extraction\ExtractionContextInterface;
 use Draw\Swagger\Extraction\ExtractionImpossibleException;
@@ -69,23 +71,24 @@ class ParamConverterExtractor implements ExtractorInterface
      * @throws ExtractionImpossibleException
      * @return void
      */
-    public function extract($method, $operation, ExtractionContextInterface $extractionContext)
+    public function extract($method, &$operation, ExtractionContextInterface $extractionContext)
     {
         if (!$this->canExtract($method, $operation, $extractionContext)) {
             throw new ExtractionImpossibleException();
         }
 
         $paramConverter = $this->getParamConverter($method);
-        if (is_null($type = $paramConverter->getClass())) {
+        if (null === $type = $paramConverter->getClass()) {
             foreach ($method->getParameters() as $parameter) {
-                if ($parameter->getName() != $paramConverter->getName()) {
+                if ($parameter->getName() !== $paramConverter->getName()) {
                     continue;
                 }
                 $type = $parameter->getClass()->getName();
             }
         }
 
-        $operation->parameters[] = $parameter = new BodyParameter();
+        $operation->requestBody = $requestBody = new RequestBody();
+        $requestBody->content['application/json'] = $mediaType = new MediaType();
 
         $subContext = $extractionContext->createSubContext();
 
@@ -112,13 +115,14 @@ class ParamConverterExtractor implements ExtractorInterface
 
         $subContext->setParameter('in-model-context', $modelContext);
 
+        $mediaType->schema = new Schema();
         $subContext->getSwagger()->extract(
             $type,
-            $parameter->schema = new Schema(),
+            $mediaType->schema,
             $subContext
         );
 
-        $parameter->schema->type = "object";
+        $mediaType->schema->type = 'object';
     }
 
     private function getDeserializationGroups(ParamConverter $paramConverter)
@@ -128,7 +132,7 @@ class ParamConverterExtractor implements ExtractorInterface
             return $options['deserializationContext']['groups'];
         }
 
-        return  array(GroupsExclusionStrategy::DEFAULT_GROUP);
+        return array(GroupsExclusionStrategy::DEFAULT_GROUP);
     }
 
     private function getValidationGroups(ParamConverter $paramConverter)
@@ -138,7 +142,7 @@ class ParamConverterExtractor implements ExtractorInterface
             return $options['validator']['groups'];
         }
 
-        return null;
+        return [];
     }
 
     /**
@@ -154,7 +158,7 @@ class ParamConverterExtractor implements ExtractorInterface
                     return false;
                 }
 
-                return $converter->getConverter() == "fos_rest.request_body";
+                return $converter->getConverter() === 'fos_rest.request_body';
             }
         );
 

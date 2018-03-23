@@ -34,17 +34,18 @@ class FOSRestViewOperationExtractor implements ExtractorInterface
      * Return if the extractor can extract the requested data or not.
      *
      * @param $source
-     * @param $type
+     * @param $target
      * @param ExtractionContextInterface $extractionContext
+     *
      * @return boolean
      */
-    public function canExtract($source, $type, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $target, ExtractionContextInterface $extractionContext)
     {
-        if(!$source instanceof ReflectionMethod) {
+        if (!$source instanceof ReflectionMethod) {
             return false;
         }
 
-        if(!$type instanceof Operation) {
+        if (!$target instanceof Operation) {
             return false;
         }
 
@@ -57,35 +58,36 @@ class FOSRestViewOperationExtractor implements ExtractorInterface
      * The system is a incrementing extraction system. A extractor can be call before you and you must complete the
      * extraction.
      *
-     * @param \ReflectionMethod $source
-     * @param Operation $type
+     * @param \ReflectionMethod $method
+     * @param Operation $operation
      * @param ExtractionContextInterface $extractionContext
      */
-    public function extract($source, $type, ExtractionContextInterface $extractionContext)
+    public function extract($method, &$operation, ExtractionContextInterface $extractionContext)
     {
-        if (!$this->canExtract($source, $type, $extractionContext)) {
+        if (!$this->canExtract($method, $operation, $extractionContext)) {
             throw new ExtractionImpossibleException();
         }
 
-        $groups = array();
+        $groups = [];
 
-        if($view = $this->getView($source)) {
+        if ($view = $this->annotationReader->getMethodAnnotation($method, View::class)) {
             $groups = $view->getSerializerGroups();
         }
 
-        if(empty($groups)) {
-            $groups = array(GroupsExclusionStrategy::DEFAULT_GROUP);
+        if (empty($groups)) {
+            $groups = [GroupsExclusionStrategy::DEFAULT_GROUP];
         }
 
         $groups = $this->groupHierarchy->getReachableGroups($groups);
 
-        $modelContext = $extractionContext->getParameter('out-model-context', array());
+        $modelContext = $extractionContext->getParameter('out-model-context', []);
         $modelContext['serializer-groups'] = $groups;
         $extractionContext->setParameter('out-model-context', $modelContext);
     }
 
     /**
      * @param ReflectionMethod $reflectionMethod
+     *
      * @return View|null
      */
     public function getView(ReflectionMethod $reflectionMethod)
@@ -97,7 +99,7 @@ class FOSRestViewOperationExtractor implements ExtractorInterface
             }
         );
 
-        if($views) {
+        if (!empty($views)) {
             return reset($views);
         }
 

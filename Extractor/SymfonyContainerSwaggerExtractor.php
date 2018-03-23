@@ -8,8 +8,8 @@ use Draw\Swagger\Extraction\ExtractionImpossibleException;
 use Draw\Swagger\Extraction\ExtractorInterface;
 use Draw\Swagger\Schema\Operation;
 use Draw\Swagger\Schema\PathItem;
-use Draw\Swagger\Schema\Swagger as SwaggerSchema;
 use Draw\Swagger\Schema\Tag;
+use Draw\Swagger\Schema\OpenApi;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -25,17 +25,18 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
      * Return if the extractor can extract the requested data or not.
      *
      * @param $source
-     * @param $type
+     * @param $target
      * @param ExtractionContextInterface $extractionContext
+     *
      * @return boolean
      */
-    public function canExtract($source, $type, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $target, ExtractionContextInterface $extractionContext)
     {
         if (!$source instanceof ContainerInterface) {
             return false;
         }
 
-        if (!$type instanceof SwaggerSchema) {
+        if (!$target instanceof OpenApi) {
             return false;
         }
 
@@ -49,29 +50,40 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
      * extraction.
      *
      * @param ContainerInterface $source
-     * @param SwaggerSchema $type
+     * @param OpenApi $target
      * @param ExtractionContextInterface $extractionContext
+     *
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException
+     * @throws ExtractionImpossibleException
      */
-    public function extract($source, $type, ExtractionContextInterface $extractionContext)
+    public function extract($source, &$target, ExtractionContextInterface $extractionContext)
     {
-        if (!$this->canExtract($source, $type, $extractionContext)) {
+        if (!$this->canExtract($source, $target, $extractionContext)) {
             throw new ExtractionImpossibleException();
         }
 
-        $this->triggerRouteExtraction($source->get('router'), $type, $extractionContext);
+        $this->triggerRouteExtraction($source->get('router'), $target, $extractionContext);
     }
 
-    private function triggerRouteExtraction(RouterInterface $router, SwaggerSchema $schema, ExtractionContextInterface $extractionContext)
+    /**
+     * @param RouterInterface $router
+     * @param OpenApi $schema
+     * @param ExtractionContextInterface $extractionContext
+     *
+     * @throws \ReflectionException
+     */
+    private function triggerRouteExtraction(RouterInterface $router, OpenApi $schema, ExtractionContextInterface $extractionContext)
     {
         foreach ($router->getRouteCollection() as $operationId => $route) {
             /* @var \Symfony\Component\Routing\Route $route */
-            if(!($path = $route->getPath())) {
+            if (!($path = $route->getPath())) {
                 continue;
             }
 
             $controller = explode('::', $route->getDefault('_controller'));
 
-            if(count($controller) != 2) {
+            if (\count($controller) !== 2) {
                 continue;
             }
 
@@ -79,7 +91,7 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
 
             $reflectionMethod = new \ReflectionMethod($class, $method);
 
-            if(!$this->isSwaggerRoute($route, $reflectionMethod)) {
+            if (!$this->isSwaggerRoute($route, $reflectionMethod)) {
                 continue;
             }
 
@@ -90,13 +102,13 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
             $extractionContext->getSwagger()->extract($route, $operation, $extractionContext);
             $extractionContext->getSwagger()->extract($reflectionMethod, $operation, $extractionContext);
 
-            if(!isset($schema->paths[$path])) {
+            if (!isset($schema->paths[$path])) {
                 $schema->paths[$path] = new PathItem();
             }
 
             $pathItem = $schema->paths[$path];
 
-            foreach($route->getMethods() as $method) {
+            foreach ($route->getMethods() as $method) {
                 $pathItem->{strtolower($method)} = $operation;
             }
         }
@@ -108,8 +120,8 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
             return true;
         }
 
-        foreach($this->annotationReader->getMethodAnnotations($method) as $annotation) {
-            if($annotation instanceof Tag) {
+        foreach ($this->annotationReader->getMethodAnnotations($method) as $annotation) {
+            if ($annotation instanceof Tag) {
                 return true;
             }
         }

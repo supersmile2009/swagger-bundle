@@ -1,73 +1,72 @@
 parameters:
-    draw.swagger.class: Draw\Swagger\Swagger
-    draw.swagger.extrator.php_doc_operation_exractor.class: Draw\Swagger\Extraction\Extractor\PhpDocOperationExtractor
-    draw.swagger.extrator.jms_extractor.class: Draw\Swagger\Extraction\Extractor\JmsExtractor
-    draw.swagger.extrator.symfony_container_swagger_extractor.class: Draw\SwaggerBundle\Extractor\SymfonyContainerSwaggerExtractor
-    draw.swagger.extrator.fos_rest_route_operation_extractor.class: Draw\SwaggerBundle\Extractor\FOSRestRouteOperationExtractor
-    draw.swagger.extrator.route_operation_extractor.class: Draw\SwaggerBundle\Extractor\RouteOperationExtractor
-    draw.swagger.extrator.swagger_schema_extractor.class: Draw\Swagger\Extraction\Extractor\SwaggerSchemaExtractor
+    draw.swagger.extractor.php_doc_operation_extractor.class: Draw\Swagger\Extraction\Extractor\PhpDocOperationExtractor
+    draw.swagger.extractor.jms_extractor.class: Draw\Swagger\Extraction\Extractor\JmsExtractor
+    draw.swagger.extractor.symfony_container_swagger_extractor.class: Draw\SwaggerBundle\Extractor\SymfonyContainerSwaggerExtractor
+    draw.swagger.extractor.fos_rest_route_operation_extractor.class: Draw\SwaggerBundle\Extractor\FOSRestRouteOperationExtractor
+    draw.swagger.extractor.route_operation_extractor.class: Draw\SwaggerBundle\Extractor\RouteOperationExtractor
+    draw.swagger.extractor.openapi_json_schema_extractor.class: Draw\Swagger\Extraction\Extractor\OpenApiJsonSchemaExtractor
     draw.swagger.extractor.param_converter_extractor.class: Draw\SwaggerBundle\Extractor\ParamConverterExtractor
-    draw.swagger.extrator.type_schema_extractor.class: Draw\Swagger\Extraction\Extractor\TypeSchemaExtractor
-    draw.swagger.extrator.fos_rest_view_operation_extractor.class: Draw\SwaggerBundle\Extractor\FOSRestViewOperationExtractor
-    draw.swagger.extrator.abstract_class_extractor.class: Draw\SwaggerBundle\Extractor\AbstractClassExtractor
+    draw.swagger.extractor.type_schema_extractor.class: Draw\Swagger\Extraction\Extractor\TypeSchemaExtractor
+    draw.swagger.extractor.fos_rest_view_operation_extractor.class: Draw\SwaggerBundle\Extractor\FOSRestViewOperationExtractor
+    draw.swagger.extractor.abstract_class_extractor.class: Draw\SwaggerBundle\Extractor\AbstractClassExtractor
 
 services:
     draw.swagger:
-        class: '%draw.swagger.class%'
+        class: Draw\Swagger\OpenApiGenerator
         arguments: ['@jms_serializer.serializer']
 
-    draw.swagger.extrator.symfony_container_swagger_extractor:
-        class: '%draw.swagger.extrator.symfony_container_swagger_extractor.class%'
+    draw.swagger.extractor.symfony_container_swagger_extractor:
+        class: '%draw.swagger.extractor.symfony_container_swagger_extractor.class%'
         arguments: ['@annotation_reader']
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.fos_rest_view_operation_extractor:
-        class: '%draw.swagger.extrator.fos_rest_view_operation_extractor.class%'
+    draw.swagger.extractor.fos_rest_view_operation_extractor:
+        class: '%draw.swagger.extractor.fos_rest_view_operation_extractor.class%'
         arguments: ['@annotation_reader', '@draw.serializer.group_hierarchy']
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.swagger_tag_extractor:
+    draw.swagger.extractor.swagger_tag_extractor:
         class: Draw\Swagger\Extraction\Extractor\SwaggerTagExtractor
         arguments: ['@annotation_reader']
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.swagger_schema_extractor:
-        class: "%draw.swagger.extrator.swagger_schema_extractor.class%"
+    draw.swagger.extractor.openapi_json_schema_extractor:
+        class: "%draw.swagger.extractor.openapi_json_schema_extractor.class%"
         arguments: ['@jms_serializer.serializer']
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.abstract_class_extractor:
-        class: '%draw.swagger.extrator.abstract_class_extractor.class%'
+    draw.swagger.extractor.abstract_class_extractor:
+        class: '%draw.swagger.extractor.abstract_class_extractor.class%'
         arguments: ['@sonata.admin.entity_manager']
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.type_schema_extractor:
-        class: '%draw.swagger.extrator.type_schema_extractor.class%'
+    draw.swagger.extractor.type_schema_extractor:
+        class: '%draw.swagger.extractor.type_schema_extractor.class%'
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.route_operation_extractor:
-        class: '%draw.swagger.extrator.route_operation_extractor.class%'
+    draw.swagger.extractor.route_operation_extractor:
+        class: '%draw.swagger.extractor.route_operation_extractor.class%'
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.fos_rest_route_operation_extractor:
-        class: '%draw.swagger.extrator.fos_rest_route_operation_extractor.class%'
+    draw.swagger.extractor.fos_rest_route_operation_extractor:
+        class: '%draw.swagger.extractor.fos_rest_route_operation_extractor.class%'
         arguments: ['@fos_rest.request.param_fetcher.reader']
         tags:
             - { name: swagger.extractor }
 
-    draw.swagger.extrator.jms_extractor:
-        class: '%draw.swagger.extrator.jms_extractor.class%'
+    draw.swagger.extractor.jms_extractor:
+        class: '%draw.swagger.extractor.jms_extractor.class%'
         arguments:
             - '@jms_serializer.metadata_factory'
             - '@jms_serializer.naming_strategy'
-            - '@draw.swagger.extrator.type_schema_extractor'
+            - '@draw.swagger.extractor.type_schema_extractor'
         tags:
             - { name: swagger.extractor }
 
@@ -105,9 +104,9 @@ services:
         parent: draw.swagger.extractor.constraint_extractor
         class: Draw\Swagger\Extraction\Extractor\Constraint\CountConstraintExtractor
 
-    draw.swagger.extrator.php_doc_operation_exractor:
-        class: '%draw.swagger.extrator.php_doc_operation_exractor.class%'
-        arguments: ['@draw.swagger.extrator.fos_rest_view_operation_extractor']
+    draw.swagger.extractor.php_doc_operation_extractor:
+        class: '%draw.swagger.extractor.php_doc_operation_extractor.class%'
+        arguments: ['@draw.swagger.extractor.fos_rest_view_operation_extractor']
         tags:
             - { name: swagger.extractor }
 

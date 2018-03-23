@@ -27,8 +27,8 @@ class AbstractClassExtractor implements ExtractorInterface
      * @param ExtractionContextInterface $subContext
      * @throws ExtractionImpossibleException
      */
-    public function extract($className, $target, ExtractionContextInterface $subContext) {
-
+    public function extract($className, &$target, ExtractionContextInterface $subContext)
+    {
         if (!$this->canExtract($className, $target, $subContext)) {
             throw new ExtractionImpossibleException();
         }
@@ -36,9 +36,10 @@ class AbstractClassExtractor implements ExtractorInterface
 
         $metadata = $this->em->getClassMetadata($reflectionClass->getName());
         foreach ($metadata->subClasses as $className) {
+            $targetSchema = clone $target;
             $subContext->getSwagger()->extract(
                 $className,
-                clone $target,
+                $targetSchema,
                 clone $subContext
             );
         }

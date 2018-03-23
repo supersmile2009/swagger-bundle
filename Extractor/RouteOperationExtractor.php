@@ -7,6 +7,8 @@ use Draw\Swagger\Extraction\ExtractionImpossibleException;
 use Draw\Swagger\Extraction\ExtractorInterface;
 use Draw\Swagger\Schema\Operation;
 use Draw\Swagger\Schema\PathParameter;
+use Draw\Swagger\Schema\Reference;
+use Draw\Swagger\Schema\Schema;
 use Symfony\Component\Routing\Route;
 
 class RouteOperationExtractor implements ExtractorInterface
@@ -16,17 +18,19 @@ class RouteOperationExtractor implements ExtractorInterface
      * Return if the extractor can extract the requested data or not.
      *
      * @param $source
-     * @param $type
+     * @param $target
      * @param ExtractionContextInterface $extractionContext
+     *
      * @return boolean
+     * @throws ExtractionImpossibleException
      */
-    public function canExtract($source, $type, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $target, ExtractionContextInterface $extractionContext)
     {
         if (!$source instanceof Route) {
             return false;
         }
 
-        if (!$type instanceof Operation) {
+        if (!$target instanceof Operation) {
             return false;
         }
 
@@ -36,29 +40,34 @@ class RouteOperationExtractor implements ExtractorInterface
     /**
      * Extract the requested data.
      *
-     * The system is a incrementing extraction system. A extractor can be call before you and you must complete the
+     * The system is a incrementing extraction system. An extractor can be called before you and you must complete the
      * extraction.
      *
-     * @param Route $source
-     * @param Operation $type
+     * @param Route $route
+     * @param Operation $operation
      * @param ExtractionContextInterface $extractionContext
+     *
+     * @throws ExtractionImpossibleException
      */
-    public function extract($source, $type, ExtractionContextInterface $extractionContext)
+    public function extract($route, &$operation, ExtractionContextInterface $extractionContext)
     {
-        if (!$this->canExtract($source, $type, $extractionContext)) {
+        if (!$this->canExtract($route, $operation, $extractionContext)) {
             throw new ExtractionImpossibleException();
         }
 
-        foreach($source->compile()->getPathVariables() as $pathVariable) {
-            foreach($type->parameters as $parameter) {
-                if($parameter->name == $pathVariable) {
+        foreach($route->compile()->getPathVariables() as $pathVariable) {
+            foreach($operation->parameters as $parameter) {
+                if($parameter->name === $pathVariable) {
                     continue 2;
                 }
             }
             $pathParameter = new PathParameter();
             $pathParameter->name = $pathVariable;
-            $pathParameter->type = "string";
-            $type->parameters[] = $pathParameter;
+            $pathParameter->schema = new Schema();
+            $pathParameter->schema->type = 'string';
+            $operation->parameters[] = $pathParameter;
         }
+
+
     }
 }
