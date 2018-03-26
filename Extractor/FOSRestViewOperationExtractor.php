@@ -79,6 +79,7 @@ class FOSRestViewOperationExtractor implements ExtractorInterface
         }
 
         $groups = $this->groupHierarchy->getReachableGroups($groups);
+        $operation->setCustomProperty('serializationGroups', $groups);
 
         $modelContext = $extractionContext->getParameter('out-model-context', []);
         $modelContext['serializer-groups'] = $groups;

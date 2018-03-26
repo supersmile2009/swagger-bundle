@@ -97,13 +97,14 @@ class ParamConverterExtractor implements ExtractorInterface
         if ($serializationGroups = $this->getDeserializationGroups($paramConverter)) {
             $serializationGroups = $this->groupHierarchy->getReachableGroups($serializationGroups);
         }
+        $operation->setCustomProperty('deserializationGroups', $serializationGroups);
 
         $subContext->setParameter(
             'validation-groups',
             $validationGroups = $this->getValidationGroups($paramConverter)
         );
 
-        $modelContext = $subContext->getParameter('in-model-context', array());
+        $modelContext = $subContext->getParameter('in-model-context', []);
 
         if ($serializationGroups) {
             $modelContext['serializer-groups'] = $serializationGroups;

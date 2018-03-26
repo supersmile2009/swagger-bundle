@@ -70,7 +70,7 @@ class FOSRestRouteOperationExtractor implements ExtractorInterface
             $parameter = null;
             if ($param instanceof QueryParam) {
                 $parameter = new QueryParameter();
-                $parameter->schema = new Schema();
+                $parameter->schema = $parameterSchema = new Schema();
                 //TODO: extract parameter constraints.
                 $operation->parameters[] = $parameter;
                 $parameter->name = $paramName;
@@ -78,26 +78,27 @@ class FOSRestRouteOperationExtractor implements ExtractorInterface
                 if ($param->nullable === false && $param->default === null) {
                     $parameter->required = true;
                 }
+                $parameter->description = $param->description;
             } elseif ($param instanceof RequestParam) {
-                $parameter = $operation->requestBody;
+                $requestBody = $operation->requestBody;
 
-                if ($parameter === null) {
-                    $parameter = new RequestBody();
-                    $parameter->content['application/json'] = new MediaType();
-                    $parameter->content['application/json']->schema = new Schema();
-                    $parameter->content['application/json']->schema->type = 'object';
-                    $operation->requestBody = $parameter;
+                if ($requestBody === null) {
+                    $requestBody = new RequestBody();
+                    $requestBody->content['application/json'] = new MediaType();
+                    $requestBody->content['application/json']->schema = new Schema();
+                    $requestBody->content['application/json']->schema->type = 'object';
+                    $operation->requestBody = $requestBody;
                 }
 
-                $propertySchema = new Schema();
-                $parameter->content['application/json']->schema->properties[$paramName] = $propertySchema;
+                $parameterSchema = new Schema();
+                $requestBody->content['application/json']->schema->properties[$paramName] = $parameterSchema;
                 if (!$param->nullable) {
-                    $parameter->content['application/json']->schema->required[] = $paramName;
+                    $requestBody->content['application/json']->schema->required[] = $paramName;
                 }
+                $parameterSchema->description = $param->description;
             }
 
-            $parameter->default = $param->default;
-            $parameter->description = $param->description;
+            $parameterSchema->default = $param->default;
         }
     }
 }
