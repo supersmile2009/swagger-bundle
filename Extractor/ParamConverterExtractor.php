@@ -10,7 +10,6 @@ use Draw\Swagger\Schema\Schema;
 use Draw\Swagger\Extraction\ExtractionContextInterface;
 use Draw\Swagger\Extraction\ExtractionImpossibleException;
 use Draw\Swagger\Extraction\ExtractorInterface;
-use Draw\Swagger\Schema\BodyParameter;
 use Draw\Swagger\Schema\Operation;
 use JMS\Serializer\Exclusion\GroupsExclusionStrategy;
 use ReflectionMethod;
@@ -42,7 +41,7 @@ class ParamConverterExtractor implements ExtractorInterface
      * @param ExtractionContextInterface $extractionContext
      * @return boolean
      */
-    public function canExtract($source, $type, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $type, ExtractionContextInterface $extractionContext): bool
     {
         if (!$source instanceof ReflectionMethod) {
             return false;
@@ -68,13 +67,14 @@ class ParamConverterExtractor implements ExtractorInterface
      * @param ReflectionMethod $method
      * @param Operation $operation
      * @param ExtractionContextInterface $extractionContext
-     * @throws ExtractionImpossibleException
+     *
      * @return void
+     * @throws ExtractionImpossibleException
      */
     public function extract($method, &$operation, ExtractionContextInterface $extractionContext)
     {
         if (!$this->canExtract($method, $operation, $extractionContext)) {
-            throw new ExtractionImpossibleException();
+            return;
         }
 
         $paramConverter = $this->getParamConverter($method);

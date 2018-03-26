@@ -30,7 +30,7 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
      *
      * @return boolean
      */
-    public function canExtract($source, $target, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $target, ExtractionContextInterface $extractionContext): bool
     {
         if (!$source instanceof ContainerInterface) {
             return false;
@@ -55,12 +55,13 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
      *
      * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
      * @throws \Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException
+     * @throws \ReflectionException
      * @throws ExtractionImpossibleException
      */
     public function extract($source, &$target, ExtractionContextInterface $extractionContext)
     {
         if (!$this->canExtract($source, $target, $extractionContext)) {
-            throw new ExtractionImpossibleException();
+            return;
         }
 
         $this->triggerRouteExtraction($source->get('router'), $target, $extractionContext);
@@ -72,6 +73,7 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
      * @param ExtractionContextInterface $extractionContext
      *
      * @throws \ReflectionException
+     * @throws ExtractionImpossibleException
      */
     private function triggerRouteExtraction(RouterInterface $router, OpenApi $schema, ExtractionContextInterface $extractionContext)
     {

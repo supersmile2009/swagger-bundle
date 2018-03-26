@@ -3,7 +3,6 @@
 namespace Draw\SwaggerBundle\Extractor;
 
 use Draw\Swagger\Extraction\ExtractionContextInterface;
-use Draw\Swagger\Extraction\ExtractionImpossibleException;
 use Draw\Swagger\Extraction\ExtractorInterface;
 use Draw\Swagger\Schema\MediaType;
 use Draw\Swagger\Schema\Operation;
@@ -35,7 +34,7 @@ class FOSRestRouteOperationExtractor implements ExtractorInterface
      *
      * @return boolean
      */
-    public function canExtract($source, $type, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $type, ExtractionContextInterface $extractionContext): bool
     {
         if (!$source instanceof \ReflectionMethod) {
             return false;
@@ -61,7 +60,7 @@ class FOSRestRouteOperationExtractor implements ExtractorInterface
     public function extract($method, &$operation, ExtractionContextInterface $extractionContext)
     {
         if (!$this->canExtract($method, $operation, $extractionContext)) {
-            throw new ExtractionImpossibleException();
+            return;
         }
 
         foreach ($this->paramReader->read($method->getDeclaringClass(), $method->getName()) as $paramName => $param) {

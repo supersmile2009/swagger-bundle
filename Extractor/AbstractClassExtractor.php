@@ -4,7 +4,6 @@ namespace Draw\SwaggerBundle\Extractor;
 
 use Doctrine\ORM\EntityManager;
 use Draw\Swagger\Extraction\ExtractionContextInterface;
-use Draw\Swagger\Extraction\ExtractionImpossibleException;
 use Draw\Swagger\Extraction\ExtractorInterface;
 use Draw\Swagger\Schema\Schema;
 
@@ -25,28 +24,40 @@ class AbstractClassExtractor implements ExtractorInterface
      * @param string $className
      * @param Schema $target
      * @param ExtractionContextInterface $subContext
-     * @throws ExtractionImpossibleException
+     *
+     * @throws \ReflectionException
+     * @throws \Draw\Swagger\Extraction\ExtractionImpossibleException
      */
     public function extract($className, &$target, ExtractionContextInterface $subContext)
     {
         if (!$this->canExtract($className, $target, $subContext)) {
-            throw new ExtractionImpossibleException();
+            return;
         }
+
         $reflectionClass = new \ReflectionClass($className);
 
         $metadata = $this->em->getClassMetadata($reflectionClass->getName());
-        foreach ($metadata->subClasses as $className) {
+        foreach ($metadata->subClasses as $subClassName) {
             $targetSchema = clone $target;
             $subContext->getSwagger()->extract(
-                $className,
+                $subClassName,
                 $targetSchema,
                 clone $subContext
             );
         }
     }
-    public function canExtract($className, $target, ExtractionContextInterface $subContext)
+
+    /**
+     * @param mixed $className
+     * @param mixed $target
+     * @param ExtractionContextInterface $subContext
+     *
+     * @return bool
+     * @throws \ReflectionException
+     */
+    public function canExtract($className, $target, ExtractionContextInterface $subContext): bool
     {
-        if (is_string($className) && class_exists($className)) {
+        if (\is_string($className) && \class_exists($className)) {
             $reflectionClass = new \ReflectionClass($className);
             return $reflectionClass->isAbstract();
         }

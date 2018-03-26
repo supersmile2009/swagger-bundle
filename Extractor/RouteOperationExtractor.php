@@ -22,9 +22,8 @@ class RouteOperationExtractor implements ExtractorInterface
      * @param ExtractionContextInterface $extractionContext
      *
      * @return boolean
-     * @throws ExtractionImpossibleException
      */
-    public function canExtract($source, $target, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $target, ExtractionContextInterface $extractionContext): bool
     {
         if (!$source instanceof Route) {
             return false;
@@ -46,13 +45,11 @@ class RouteOperationExtractor implements ExtractorInterface
      * @param Route $route
      * @param Operation $operation
      * @param ExtractionContextInterface $extractionContext
-     *
-     * @throws ExtractionImpossibleException
      */
     public function extract($route, &$operation, ExtractionContextInterface $extractionContext)
     {
         if (!$this->canExtract($route, $operation, $extractionContext)) {
-            throw new ExtractionImpossibleException();
+            return;
         }
 
         foreach($route->compile()->getPathVariables() as $pathVariable) {

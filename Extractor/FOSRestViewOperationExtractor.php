@@ -39,7 +39,7 @@ class FOSRestViewOperationExtractor implements ExtractorInterface
      *
      * @return boolean
      */
-    public function canExtract($source, $target, ExtractionContextInterface $extractionContext)
+    public function canExtract($source, $target, ExtractionContextInterface $extractionContext): bool
     {
         if (!$source instanceof ReflectionMethod) {
             return false;
@@ -65,7 +65,7 @@ class FOSRestViewOperationExtractor implements ExtractorInterface
     public function extract($method, &$operation, ExtractionContextInterface $extractionContext)
     {
         if (!$this->canExtract($method, $operation, $extractionContext)) {
-            throw new ExtractionImpossibleException();
+            return;
         }
 
         $groups = [];
