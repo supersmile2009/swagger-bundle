@@ -115,3 +115,12 @@ services:
         arguments: ['@annotations.reader', '@draw.serializer.group_hierarchy']
         tags:
             - { name: swagger.extractor }
+
+    draw.swagger.generator.example_generator:
+        class: Draw\Swagger\Generator\ExamplesGenerator
+        arguments:
+            - '@draw.swagger.extractor.type_schema_extractor'
+            - '@doctrine.orm.default_entity_manager.metadata_factory'
+        public: true
+        tags:
+            - { name: swagger.generator }

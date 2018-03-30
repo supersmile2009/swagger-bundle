@@ -2,6 +2,7 @@
 
 namespace Draw\SwaggerBundle\Controller;
 
+use Draw\Swagger\Generator\ExamplesGenerator;
 use Draw\Swagger\Schema\OpenApi;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +40,7 @@ class SwaggerController extends Controller
         $schema->servers[0]->url = $request->getSchemeAndHttpHost();
 
         $schema = $swagger->extract($this->container, $schema);
+        $this->get('draw.swagger.generator.example_generator')->generateExamples($schema);
         $jsonSchema = $swagger->dump($schema);
 
         return new JsonResponse($jsonSchema, 200, [], true);
