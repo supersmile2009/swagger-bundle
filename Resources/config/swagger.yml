@@ -27,6 +27,12 @@ services:
         tags:
             - { name: swagger.extractor }
 
+    draw.swagger.extractor.operation_swagger_tag_extractor:
+        class: Draw\Swagger\Extraction\Extractor\OperationSwaggerTagExtractor
+        arguments: ['@annotation_reader']
+        tags:
+            - { name: swagger.extractor }
+
     draw.swagger.extractor.swagger_tag_extractor:
         class: Draw\Swagger\Extraction\Extractor\SwaggerTagExtractor
         arguments: ['@annotation_reader']

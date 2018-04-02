@@ -77,6 +77,7 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
      */
     private function triggerRouteExtraction(RouterInterface $router, OpenApi $schema, ExtractionContextInterface $extractionContext)
     {
+        $controllerClasses = [];
         foreach ($router->getRouteCollection() as $operationId => $route) {
             /* @var \Symfony\Component\Routing\Route $route */
             if (!($path = $route->getPath())) {
@@ -96,9 +97,9 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
             if (!$this->isSwaggerRoute($route, $reflectionMethod)) {
                 continue;
             }
+            $controllerClasses[] = $class;
 
             $operation = new Operation();
-
             $operation->operationId = $operationId;
 
             $extractionContext->getSwagger()->extract($route, $operation, $extractionContext);
@@ -114,6 +115,18 @@ class SymfonyContainerSwaggerExtractor implements ExtractorInterface
                 $pathItem->{strtolower($method)} = $operation;
             }
         }
+        $controllerClasses = \array_unique($controllerClasses);
+
+        foreach ($controllerClasses as $controllerClass) {
+            $reflectionClass = new \ReflectionClass($controllerClass);
+            $openApi = $extractionContext->getRootSchema();
+            $extractionContext->getSwagger()->extract($reflectionClass, $openApi, $extractionContext);
+        }
+        usort($extractionContext->getRootSchema()->tags, [$this, 'compareTags']);
+    }
+    private function compareTags(Tag $tag1, Tag $tag2)
+    {
+        return strcmp($tag1->name, $tag2->name);
     }
 
     private function isSwaggerRoute(Route $route, \ReflectionMethod $method)
